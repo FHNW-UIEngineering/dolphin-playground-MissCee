@@ -11,7 +11,7 @@ import myapp.util.DTOMixin;
 
 public class SomeCombinedService implements SomeService, DTOMixin {
 
-    String[] names = {"Virgil Grissom", "Edward White", "Roger Chaffee",      // Apollo 1
+    String[] names = {"Virgil Grissom", "Iris Cipriano", "Roger Chaffee",      // Apollo 1, "Edward White"
                       "Walter Schirra", "Donn Eisele" , "Walter Cunningham",  // Apollo 7
                       "Frank Borman"  , "James Lovell", "William Anders",     // Apollo 8
                       "James McDivitt", "David Scott" , "Russel Schweickart", // Apollo 9
