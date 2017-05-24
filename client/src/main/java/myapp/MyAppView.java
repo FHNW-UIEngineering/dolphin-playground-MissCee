@@ -28,7 +28,7 @@ public class MyAppView extends Application implements BasePmMixin {
     }
 
     private void buildUI(Stage stage) {
-        Pane root   = new RootPane(clientDolphin);
+        Pane root   = new RootPane(clientDolphin); // hier anstatt Einstieg im PM, neu Dolphin (ModelStore!)
         Scene scene = new Scene(root);
 
         stage.setScene(scene);

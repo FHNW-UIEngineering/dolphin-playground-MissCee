@@ -34,8 +34,8 @@ class PersonController extends Controller implements BasePmMixin {
     @Override
     public void registerCommands(ActionRegistry registry) {
         registry.register(PersonCommands.LOAD_SOME_PERSON, ($, $$) -> loadPerson());
-        registry.register(PersonCommands.SAVE            , ($, $$) -> save());
-        registry.register(PersonCommands.RESET           , ($, $$) -> reset(PMDescription.PERSON));
+        registry.register(PersonCommands.SAVE, ($, $$) -> save());
+        registry.register(PersonCommands.RESET, ($, $$) -> reset(PMDescription.PERSON));
     }
 
     @Override
@@ -52,6 +52,10 @@ class PersonController extends Controller implements BasePmMixin {
 
     @Override
     protected void setupValueChangedListener() {
+        personProxy.age.valueProperty().addListener((observable, oldValue, newValue) -> {
+            personProxy.isAdult.setValue(newValue.intValue() >= 18);
+        });
+
         getApplicationState().language.valueProperty().addListener((observable, oldValue, newValue) -> translate(personProxy, newValue));
     }
 
