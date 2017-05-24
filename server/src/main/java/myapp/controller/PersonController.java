@@ -1,6 +1,5 @@
 package myapp.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.opendolphin.core.Dolphin;
@@ -8,8 +7,8 @@ import org.opendolphin.core.server.DTO;
 import org.opendolphin.core.server.ServerPresentationModel;
 import org.opendolphin.core.server.comm.ActionRegistry;
 
+import myapp.presentationmodel.BasePmMixin;
 import myapp.presentationmodel.PMDescription;
-import myapp.presentationmodel.SpecialPMMixin;
 import myapp.presentationmodel.person.Person;
 import myapp.presentationmodel.person.PersonCommands;
 import myapp.service.SomeService;
@@ -22,41 +21,38 @@ import myapp.util.Controller;
  * <p>
  * Todo: Replace this with your Controller
  */
-class PersonController extends Controller implements SpecialPMMixin {
+class PersonController extends Controller implements BasePmMixin {
 
     private final SomeService service;
-    private       Person      personProxy;
+
+    private Person personProxy;
 
     PersonController(SomeService service) {
         this.service = service;
     }
 
     @Override
-    public void registerIn(ActionRegistry reception) {
-        super.registerIn(reception);
-        reception.register(PersonCommands.LOAD_SOME_PERSON, (command, response) -> loadPerson());
-        reception.register(PersonCommands.SAVE            , (command, response) -> save());
-        reception.register(PersonCommands.RESET           , (command, response) -> reset(PMDescription.PERSON, Collections.emptyList()));
+    public void registerCommands(ActionRegistry registry) {
+        registry.register(PersonCommands.LOAD_SOME_PERSON, ($, $$) -> loadPerson());
+        registry.register(PersonCommands.SAVE            , ($, $$) -> save());
+        registry.register(PersonCommands.RESET           , ($, $$) -> reset(PMDescription.PERSON));
     }
 
     @Override
     protected void initializeBasePMs() {
-        ServerPresentationModel pm = createProxyPM(PMDescription.PERSON, PERSON_PROXY_ID);
+        ServerPresentationModel pm = createProxyPM(PMDescription.PERSON, PERSON_PROXY_PM_ID);
+
         personProxy = new Person(pm);
     }
 
     @Override
     protected void setDefaultValues() {
         personProxy.name.setMandatory(true);
-        personProxy.age.setValue(10);
-        personProxy.isAdult.setValue(false);
     }
 
     @Override
     protected void setupValueChangedListener() {
-        getPresentationState().language.valueProperty().addListener((observable, oldValue, newValue) -> {
-            translate(personProxy, newValue);
-        });
+        getApplicationState().language.valueProperty().addListener((observable, oldValue, newValue) -> translate(personProxy, newValue));
     }
 
     ServerPresentationModel loadPerson() {
@@ -69,9 +65,9 @@ class PersonController extends Controller implements SpecialPMMixin {
     }
 
     void save() {
-        List<DTO> dtos = dirtyDTOs(PMDescription.PERSON, Collections.emptyList());
+        List<DTO> dtos = dirtyDTOs(PMDescription.PERSON);
         service.save(dtos);
-        rebase(PMDescription.PERSON, Collections.emptyList());
+        rebase(PMDescription.PERSON);
     }
 
     @Override
